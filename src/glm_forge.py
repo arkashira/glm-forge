@@ -1,34 +1,30 @@
-import csv
 import json
+import argparse
 from dataclasses import dataclass
-from datetime import datetime
-from os import makedirs
-from os.path import exists, join
-from typing import List
 
 @dataclass
-class TrainingLog:
-    epoch: int
-    loss: float
-    gpu_usage: float
-    cost: float
+class InferenceRequest:
+    data: str
 
-class GLMForge:
-    def __init__(self, project_id: str):
-        self.project_id = project_id
-        self.report_dir = join('/tmp', project_id)
-        if not exists(self.report_dir):
-            makedirs(self.report_dir)
+def run_inference(payload_file):
+    try:
+        with open(payload_file, 'r') as f:
+            payload = json.load(f)
+        inference_request = InferenceRequest(data=payload['data'])
+        # Simulate inference logic
+        result = f"Inferred result: {inference_request.data}"
+        return result
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
 
-    def generate_report(self, training_logs: List[TrainingLog]) -> str:
-        report_path = join(self.report_dir, f'report_{datetime.now().strftime("%Y%m%d%H%M%S")}.csv')
-        with open(report_path, 'w', newline='') as csvfile:
-            fieldnames = ['epoch', 'loss', 'gpu_usage', 'cost']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            for log in training_logs:
-                writer.writerow(log.__dict__)
-        return report_path
-
-    def get_download_link(self, report_path: str) -> str:
-        return f'/download/{self.project_id}/{report_path.split("/")[-1]}'
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('payload_file', help='Path to JSON payload file')
+    args = parser.parse_args()
+    result = run_inference(args.payload_file)
+    if result:
+        print(result)
+        return 0
+    else:
+        return 1

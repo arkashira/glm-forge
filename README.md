@@ -1,10 +1,14 @@
 # GLM Forge
-GLM Forge is a tool for generating reports and download links for machine learning training logs.
+
+A Python project for running inference in CI containers.
 
 ## Usage
-1. Create a `GLMForge` object with a project ID.
-2. Generate a report using the `generate_report` method, passing in a list of `TrainingLog` objects.
-3. Get the download link for the report using the `get_download_link` method.
 
-## Testing
-Run the tests using `pytest`.
+1. Build the Docker image using the provided Dockerfile.
+2. Run the image with a JSON payload file as an argument.
+
+## Acceptance Criteria
+
+* Docker image size < 200MB
+* Exposes a /run-inference script that accepts a JSON payload file
+* Script exits with 0 on success and non-zero on failure
